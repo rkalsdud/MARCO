@@ -1,0 +1,91 @@
+VERSION ""
+
+
+NS_ :
+    NS_DESC_
+    CM_
+    BA_DEF_
+    BA_
+    VAL_
+    CAT_DEF_
+    CAT_
+    FILTER
+    BA_DEF_DEF_
+    EV_DATA_
+    ENVVAR_DATA_
+    SGTYPE_
+    SGTYPE_VAL_
+    BA_DEF_SGTYPE_
+    BA_SGTYPE_
+    SIG_TYPE_REF_
+    VAL_TABLE_
+    SIG_GROUP_
+    SIG_VALTYPE_
+    SIGTYPE_VALTYPE_
+    BO_TX_BU_
+    BA_DEF_REL_
+    BA_REL_
+    BA_DEF_DEF_REL_
+    BU_SG_REL_
+    BU_EV_REL_
+    BU_BO_REL_
+    SG_MUL_VAL_
+
+BS_:
+
+BU_: ControlNode MonitorNode
+
+BO_ 256 EmergencyStop: 1 ControlNode
+ SG_ Stop : 0|8@1+ (1,0) [0|1] ""  MonitorNode
+
+BO_ 257 MotorCommand: 3 ControlNode
+ SG_ Direction : 0|8@1+ (1,0) [0|2] ""  MonitorNode
+ SG_ TargetDuty : 8|16@1+ (1,0) [0|999] ""  MonitorNode
+
+BO_ 511 ControlHeartbeat: 1 ControlNode
+ SG_ Counter : 0|8@1+ (1,0) [0|255] ""  MonitorNode
+
+BO_ 513 MotorStatus: 4 MonitorNode
+ SG_ Direction : 0|8@1+ (1,0) [0|2] ""  ControlNode
+ SG_ CurrentDuty : 8|16@1+ (1,0) [0|999] ""  ControlNode
+ SG_ ErrorFlag : 24|8@1+ (1,0) [0|1] ""  ControlNode
+
+BO_ 514 PotValue: 2 MonitorNode
+ SG_ RawADC : 0|16@1+ (1,0) [0|4095] ""  ControlNode
+
+BO_ 515 EncoderCount: 4 MonitorNode
+ SG_ CumulativeCount : 0|32@1- (1,0) [-2147483648|2147483647] ""  ControlNode
+
+BO_ 528 DiagStatus: 3 MonitorNode
+ SG_ TEC : 0|8@1+ (1,0) [0|255] ""  ControlNode
+ SG_ REC : 8|8@1+ (1,0) [0|255] ""  ControlNode
+ SG_ BusState : 16|8@1+ (1,0) [0|2] ""  ControlNode
+
+BO_ 767 MonitorHeartbeat: 1 MonitorNode
+ SG_ Counter : 0|8@1+ (1,0) [0|255] ""  ControlNode
+
+
+CM_ BU_ ControlNode "CAN1 - 제어 버스(버스A) 노드. 모터 명령과 긴급정지를 송신한다.";
+CM_ BU_ MonitorNode "CAN2 - 모니터링 버스(버스B) 노드. 상태/센서/진단 정보를 송신한다.";
+
+CM_ BO_ 256 "긴급 정지 명령. 버스A 내 최우선순위(가장 낮은 ID).";
+CM_ BO_ 257 "모터 방향/목표 속도 명령.";
+CM_ BO_ 511 "제어 버스 생존 신호(하트비트). 버스A 내 최저 우선순위.";
+CM_ BO_ 513 "모터 현재 방향/속도 피드백.";
+CM_ BO_ 514 "가변저항 ADC 원시값(12비트).";
+CM_ BO_ 515 "엔코더 누적 카운트.";
+CM_ BO_ 528 "CAN 버스 에러 카운터 및 상태 진단.";
+CM_ BO_ 767 "모니터링 버스 생존 신호(하트비트).";
+
+CM_ SG_ 256 Stop "0=해제, 1=긴급정지";
+CM_ SG_ 257 Direction "0=정지, 1=정방향, 2=역방향";
+CM_ SG_ 257 TargetDuty "PWM 목표 듀티, TIM3 ARR=999 기준";
+CM_ SG_ 513 ErrorFlag "0=정상, 1=에러 발생";
+CM_ SG_ 515 CumulativeCount "부호 있는 누적 회전 카운트";
+CM_ SG_ 528 TEC "Transmit Error Counter (CAN_ESR 참조)";
+CM_ SG_ 528 REC "Receive Error Counter (CAN_ESR 참조)";
+CM_ SG_ 528 BusState "0=정상, 1=Error Passive, 2=Bus-Off";
+
+VAL_ 257 Direction 0 "Stop" 1 "Forward" 2 "Reverse";
+VAL_ 513 Direction 0 "Stop" 1 "Forward" 2 "Reverse";
+VAL_ 528 BusState 0 "Normal" 1 "ErrorPassive" 2 "BusOff";
