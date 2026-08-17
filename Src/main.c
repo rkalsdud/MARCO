@@ -525,12 +525,24 @@ int main(void)
     }
 
     //모니터링 버스 송신
-    if (CAN2->TSR & (1<<26)){ // CAN2 메일박스0 비어있는지 확인
-      CAN2->sTxMailBox[0].TIR  = (ID_MONITOR_HEARTBEAT<<21); // CAN1의 0x123과 다른 ID로 구분
-      CAN2->sTxMailBox[0].TDTR = 1;
-      CAN2->sTxMailBox[0].TDLR = (uint8_t)counter;
-      CAN2->sTxMailBox[0].TIR |= (1<<0);
-    }
+    if (CAN2->TSR & (1<<26)){
+     if (counter % 2 == 0) {
+        // MotorStatus 송신
+        uint16_t nowCount = Encoder_GetPulseCount();
+        uint16_t currentSpeed = (uint16_t)(nowCount - lastEncoderCount);
+        lastEncoderCount = nowCount;
+        CAN2->sTxMailBox[0].TIR  = (ID_MOTOR_STATUS << 21);
+        CAN2->sTxMailBox[0].TDTR = 4;
+        CAN2->sTxMailBox[0].TDLR = DIR_FORWARD | ((uint32_t)currentSpeed << 8);
+        CAN2->sTxMailBox[0].TIR |= (1<<0);
+     } 
+     else { 
+        CAN2->sTxMailBox[0].TIR  = (ID_MONITOR_HEARTBEAT<<21); // CAN1의 0x123과 다른 ID로 구분
+        CAN2->sTxMailBox[0].TDTR = 1;
+        CAN2->sTxMailBox[0].TDLR = (uint8_t)counter;
+        CAN2->sTxMailBox[0].TIR |= (1<<0);
+     }
+}
 #endif
 
     HAL_Delay(1000);
