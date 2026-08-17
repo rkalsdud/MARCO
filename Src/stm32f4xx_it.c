@@ -280,7 +280,7 @@ void CAN2_RX0_IRQHandler(void)
       CAN1->sTxMailBox[0].TIR  = (rxId<<21); 
       CAN1->sTxMailBox[0].TDTR = CAN2->sFIFOMailBox[0].RDTR & 0xF;
       CAN1->sTxMailBox[0].TDLR = data0;
-      CAN1->sTxMailBox[0].TDLR = data1;
+      CAN1->sTxMailBox[0].TDHR = data1;
       CAN1->sTxMailBox[0].TIR |= (1<<0);
     }
     CAN2->RF0R |= (1<<5);
